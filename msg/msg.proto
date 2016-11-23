@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+message msg {
+  required string cid = 1;
+  required string timestamp = 2;
+  required int32 height = 3;
+  required int32 width = 4;
+  required bytes image = 5;
+}
