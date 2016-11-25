@@ -1,5 +1,6 @@
 import time
 import cv2
+import imutils
 import numpy as np
 import msg_pb2
 from websocket import create_connection
@@ -7,14 +8,17 @@ from websocket import create_connection
 cap = cv2.VideoCapture(0)
 ret, frame1 = cap.read()
 
+frame1 = imutils.resize(frame1, width=400)
 prvs = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
 prvs = cv2.GaussianBlur(prvs, (21, 21), 0)
 avg = (cv2.GaussianBlur(prvs, (21, 21), 0)).copy().astype("float")
 
 ws = create_connection("ws://127.0.0.1:8080/")
 
-while(1):
+while True:
     ret, frame2 = cap.read()
+
+    frame2 = imutils.resize(frame2, width=400)
 
     next = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
     next = cv2.GaussianBlur(next, (21, 21), 0)
