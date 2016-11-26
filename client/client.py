@@ -1,7 +1,6 @@
 import time
 import cv2
 import imutils
-import numpy as np
 import msg_pb2
 from websocket import create_connection
 
@@ -30,7 +29,7 @@ while True:
     cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[1]
 
     for c in cnts:
-        if cv2.contourArea(c) > (frame2.shape[0]*frame2.shape[1]) * 0.1:
+        if cv2.contourArea(c) > (frame2.shape[0]*frame2.shape[1]) * 0.05:
             msg = msg_pb2.msg()
             msg.cid = "montion_detected"
             msg.timestamp = str(time.time())
@@ -38,8 +37,13 @@ while True:
             msg.width = frame2.shape[1]
             msg.image = (cv2.cvtColor(frame2, cv2.COLOR_BGR2RGBA)).tostring()
             ws.send(msg.SerializeToString())
+            (x, y, w, h) = cv2.boundingRect(c)
+            cv2.rectangle(frame2, (x, y), (x + w, y + h), (0, 255, 0), 2)
             break
 
+    cv2.imshow('Motion Detector', frame2)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
     prvs = next
 
 ws.close()
